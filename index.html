@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relax</title>
+    <style>
+
+        a {
+            color: #0889fa;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #000428, #004e92);
+            position: relative;
+        }
+
+        /* Лунный диск */
+        .moon {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+            box-shadow: 0 0 50px rgba(255,255,255,0.3);
+            top: 15%;
+            left: 20%;
+            animation: moonGlow 4s ease-in-out infinite;
+        }
+
+        /* Кратеры на луне */
+        .moon::after {
+            content: '';
+            position: absolute;
+            background: #dee2e6;
+            border-radius: 50%;
+            width: 15px;
+            height: 15px;
+            top: 30%;
+            left: 25%;
+            box-shadow: 
+                40px 30px 0 -3px #ced4da,
+                25px 70px 0 -5px #ced4da,
+                60px 50px 0 -2px #ced4da;
+        }
+
+        /* Парящие облака */
+        .cloud {
+            position: absolute;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50px;
+            animation: float 30s linear infinite;
+        }
+
+        /* Падающие звезды */
+        .shooting-star {
+            position: absolute;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, white);
+            animation: shoot 2s linear infinite;
+        }
+
+        /* Анимации */
+        @keyframes moonGlow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.1); }
+        }
+
+        @keyframes float {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100vw); }
+        }
+
+        @keyframes shoot {
+            from {
+                transform: translate(-100px, -100px) rotate(-45deg);
+                opacity: 1;
+            }
+            to {
+                transform: translate(100vw, 100vh) rotate(-45deg);
+                opacity: 0;
+            }
+        }
+
+        /* Светлячки */
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+    </style>
+</head>
+<body>
+    <a href="/index.html">Back</a>
+    <div class="moon"></div>
+    <div class="stars-container"></div>
+    <div class="particles-container"></div>
+
+
+    <script>
+        // Генерация звезд
+        function createStars() {
+            const container = document.querySelector('.stars-container');
+            for(let i = 0; i < 500; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                Object.assign(star.style, {
+                    left: Math.random() * 100 + '%',
+                    top: Math.random() * 100 + '%',
+                    width: Math.random() * 3 + 'px',
+                    height: star.style.width,
+                    animationDelay: Math.random() * 3 + 's'
+                });
+                container.appendChild(star);
+            }
+        }
+
+        // Случайные облака
+        function createClouds() {
+            for(let i = 0; i < 5; i++) {
+                const cloud = document.createElement('div');
+                cloud.className = 'cloud';
+                Object.assign(cloud.style, {
+                    width: Math.random() * 200 + 100 + 'px',
+                    height: Math.random() * 50 + 30 + 'px',
+                    top: Math.random() * 50 + 20 + '%',
+                    opacity: Math.random() * 0.3 + 0.1,
+                    animationDelay: Math.random() * 20 + 's'
+                });
+                document.body.appendChild(cloud);
+            }
+        }
+
+        // Светлячки
+        function createParticles() {
+            const container = document.querySelector('.particles-container');
+            for(let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                Object.assign(particle.style, {
+                    left: Math.random() * 100 + '%',
+                    top: Math.random() * 100 + '%',
+                    animationDelay: Math.random() * 3 + 's'
+                });
+                container.appendChild(particle);
+            }
+        }
+
+        // Падающие звезды
+        function createShootingStars() {
+            setInterval(() => {
+                const star = document.createElement('div');
+                star.className = 'shooting-star';
+                star.style.top = Math.random() * 50 + '%';
+                document.body.appendChild(star);
+                setTimeout(() => star.remove(), 2000);
+            }, 5000 + Math.random() * 10000);
+        }
+
+        // Инициализация
+        window.addEventListener('load', () => {
+            createStars();
+            createClouds();
+            createParticles();
+            createShootingStars();
+            
+            // Параллакс-эффект
+            document.addEventListener('mousemove', (e) => {
+                const x = e.clientX / window.innerWidth - 0.5;
+                const y = e.clientY / window.innerHeight - 0.5;
+                document.body.style.transform = `
+                    perspective(1000px)
+                    rotateX(${y * 2}deg)
+                    rotateY(${x * 2}deg)
+                `;
+            });
+        });
+    </script>
+</body>
+</html>
